@@ -37,7 +37,7 @@ describe OracleOfBacon do
       end
     end
   end
-  describe 'parsing XML response', skip => true  do
+  describe 'parsing XML response' do
     describe 'for a normal match' do
       subject { OracleOfBacon::Response.new(File.read 'spec/graph_example.xml') }
       its(:type) { should == :graph }
@@ -73,7 +73,7 @@ describe OracleOfBacon do
       its(:data) { should match /unauthorized/i }
     end
   end
-  describe 'constructing URI', :skip => true do
+  describe 'constructing URI' do
     subject do
       oob = OracleOfBacon.new('fake_key')
       oob.to = '3%2 "a' ; oob.from = 'George Clooney'
