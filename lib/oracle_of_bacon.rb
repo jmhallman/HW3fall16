@@ -25,7 +25,7 @@ class OracleOfBacon
     end
   end
 
-  def initialize(api_key)
+  def initialize(api_key='')
     # your code here
     @api_key = api_key
     @to = "Kevin Bacon"
@@ -45,15 +45,17 @@ class OracleOfBacon
       # convert all of these into a generic OracleOfBacon::NetworkError,
       #  but keep the original error message
       # your code here
+      raise NetworkError, e.message
     end
     # your code here: create the OracleOfBacon::Response object
+    @response = Response.new(xml)
   end
 
   def make_uri_from_arguments
     # your code here: set the @uri attribute to properly-escaped URI
     # constructed from the @from, @to, @api_key arguments
-    uriString = 'http://oracleofbacon.org/cgi-bin/xml?p=' + @api_key + '&a=' + @to + '&b=' + @from
-    @uri = CGI.escape(uriString)
+    @uri = 'http://oracleofbacon.org/cgi-bin/xml?enc=utf-8&p=' + CGI.escape(api_key) + '&a=' + CGI.escape(to) + '&b=' + CGI.escape(from)
+    #@uri = CGI.escape(uriString)
   end
       
   class Response
@@ -81,20 +83,22 @@ class OracleOfBacon
     def parse_error_response
       #Your code here.  Assign @type and @data
       # based on type attribute and body of the error element
-=begin     
-      if type == 'badinput'
+    
+      if @doc.xpath('//error').to_s.include? 'badinput'
         @type = :badinput
-        @data = 'No query received'
-      elsif @type == 'unlinkable'
+        #@data = 'No query received'
+      elsif @doc.xpath('//error').to_s.include? 'unlinkable'
         @type = :unlinkable
-        @data = 'There is no link'
-      elsif @type == 'unauthorized'
+        #@data = 'There is no link'
+      else
         @type = :unauthorized
-        @data = 'Unauthorized'
+        #@data = 'Unauthorized'
       end
-=end
-    @type = :unauthorized
-    @data = @doc.xpath('/error')
+      
+      @data = @doc.xpath('//error').to_s
+
+    #@type = :unauthorized
+    #@data = @doc.xpath('/error')
     #@data = 'unauthorized'
     end
 
