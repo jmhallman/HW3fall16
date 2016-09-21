@@ -25,7 +25,7 @@ class OracleOfBacon
     end
   end
 
-  def initialize(api_key='')
+  def initialize(api_key = '')
     # your code here
     @api_key = api_key
     @to = "Kevin Bacon"
@@ -48,14 +48,13 @@ class OracleOfBacon
       raise NetworkError, e.message
     end
     # your code here: create the OracleOfBacon::Response object
-    @response = Response.new(xml)
+    @responseObject = Response.new(xml)
   end
 
   def make_uri_from_arguments
     # your code here: set the @uri attribute to properly-escaped URI
     # constructed from the @from, @to, @api_key arguments
-    @uri = 'http://oracleofbacon.org/cgi-bin/xml?enc=utf-8&p=' + CGI.escape(api_key) + '&a=' + CGI.escape(to) + '&b=' + CGI.escape(from)
-    #@uri = CGI.escape(uriString)
+    @uri = 'http://oracleofbacon.org/cgi-bin/xml?p=' + CGI.escape(api_key) + '&a=' + CGI.escape(to) + '&b=' + CGI.escape(from)
   end
       
   class Response
@@ -86,20 +85,13 @@ class OracleOfBacon
     
       if @doc.xpath('//error').to_s.include? 'badinput'
         @type = :badinput
-        #@data = 'No query received'
       elsif @doc.xpath('//error').to_s.include? 'unlinkable'
         @type = :unlinkable
-        #@data = 'There is no link'
       else
         @type = :unauthorized
-        #@data = 'Unauthorized'
       end
       
       @data = @doc.xpath('//error').to_s
-
-    #@type = :unauthorized
-    #@data = @doc.xpath('/error')
-    #@data = 'unauthorized'
     end
 
     def parse_spellcheck_response
@@ -111,7 +103,6 @@ class OracleOfBacon
     def parse_graph_response
       #Your code here
       @type = :graph
-      #@data = @doc.xpath('/actor', '/movie').map(&:text)
       actorArray = @doc.xpath('//actor').map(&:text)
       movieArray = @doc.xpath('//movie').map(&:text)
       @data = actorArray.zip(movieArray).flatten.compact
